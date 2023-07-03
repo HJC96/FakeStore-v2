@@ -2,7 +2,6 @@ package com.fakeapi.FakeStore.service;
 
 
 import com.fakeapi.FakeStore.domain.Hotel;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service

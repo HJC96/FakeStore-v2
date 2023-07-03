@@ -11,7 +11,7 @@ public class Hotel {
     private String name;
     private String address;
     private int roomCount;
-//    public Hotel(Long hotelId, String name, String address, Long roomCount){ -> @AllArgsConstructor
+//    public Hotel(Long hotelId, String name, String address, int roomCount){ -> @AllArgsConstructor
 //        this.hoteldId = hotelId;
 //    }
 }
