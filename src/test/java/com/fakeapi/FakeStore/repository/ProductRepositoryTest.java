@@ -21,8 +21,6 @@ class ProductRepositoryTest {
                 "Fjallraven"
 
         );
-        //                "what is Fjallraven?",
-        //                "Men's clothing"
         Product result = productRepository.save(product);
         log.info("id: "+result.getId());
 
