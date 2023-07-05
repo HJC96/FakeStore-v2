@@ -22,6 +22,11 @@ public class ProductController {
         return productService.read(id);
     }
 
+    @GetMapping("{getSize}")
+    public Page<Product> read_limit(@RequestParam(value="limit",required = false) int size, @RequestParam(required = false, defaultValue = "0") int page){
+        return productService.list(page, size);
+    }
+
     @PostMapping
     public Product registerProduct(ProductDTO productDTO){
         return productService.register(productDTO);
@@ -32,5 +37,7 @@ public class ProductController {
         int size=10;
         return productService.list(page, size);
     }
+
+
 
 }
