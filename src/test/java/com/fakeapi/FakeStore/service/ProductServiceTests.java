@@ -1,5 +1,6 @@
 package com.fakeapi.FakeStore.service;
 
+import com.fakeapi.FakeStore.domain.Product;
 import com.fakeapi.FakeStore.dto.ProductDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -13,8 +14,8 @@ class ProductServiceTests {
     ProductService productService;
     @Test
     public void ProductServiceTest(){
-        ProductDTO productDTO = productService.read(2L);
-        log.info(productDTO);
+        Product product = productService.read(2L);
+        log.info(product);
 
     }
 }
