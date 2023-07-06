@@ -3,10 +3,7 @@ package com.fakeapi.FakeStore.domain;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @AllArgsConstructor
@@ -16,16 +13,26 @@ import javax.persistence.Id;
 @ToString
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "PRODUCT_ID")
     private Long id;
 
+    @Column(name = "PRICE")
     private Double price;
+    @Column(name = "TITLE")
     private String title;
-//    private String description;
 
-//    private String category;
+    @Column(name = "DSECRIPTION")
+    private String description;
 
-//    private ImageSet image;
-//  rating -> json 객체인데 어떻게 표현해야할지 모르겠음...{}
+    @ManyToOne
+    @JoinColumn(name = "CATEGORY_ID")
+    private Category category;
+
+    @Column(name = "IMAGEURL")
+    private String imageurl;
+
+    @Embedded
+    @Column(name = "RATING")
+    private Rating rating;
 }
