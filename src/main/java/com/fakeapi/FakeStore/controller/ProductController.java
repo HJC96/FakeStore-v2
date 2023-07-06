@@ -22,21 +22,25 @@ public class ProductController {
         return productService.read(id);
     }
 
-    @GetMapping("{getSize}")
-    public Page<Product> read_limit(@RequestParam(value="limit",required = false) int size, @RequestParam(required = false, defaultValue = "0") int page){
-        return productService.list(page, size);
+    @GetMapping
+    public Page<Product> read_limit(@RequestParam(value="limit",required = false, defaultValue = "0") int limit, @RequestParam(required = false, defaultValue = "0") int page){
+        int size=10;
+        if(limit != 0)
+            return productService.list(page, limit);
+        else
+            return productService.list(page, size);
     }
 
     @PostMapping
     public Product registerProduct(ProductDTO productDTO){
         return productService.register(productDTO);
     }
-
-    @GetMapping
-    public Page<Product> list(@RequestParam(required = false, defaultValue = "0") Long id, @RequestParam(required = false, defaultValue = "0") int page) {
-        int size=10;
-        return productService.list(page, size);
-    }
+//
+//    @GetMapping
+//    public Page<Product> list(@RequestParam(required = false, defaultValue = "0") Long id, @RequestParam(required = false, defaultValue = "0") int page) {
+//        int size=10;
+//        return productService.list(page, size);
+//    }
 
 
 
