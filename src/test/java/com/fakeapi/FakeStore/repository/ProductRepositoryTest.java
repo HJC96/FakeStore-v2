@@ -18,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProductRepositoryTest {
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
     private Rating rating;
 
 //    @Test
@@ -39,9 +42,11 @@ class ProductRepositoryTest {
 //    }
     @Test
     public void testProductRepository(){
-        Category category = new Category();
-
-        category.setName("men's clothing");
+//        Category category = new Category();
+//
+//        category.setName("men's clothing");
+//        List<Category> categoryList = new ArrayList<>();
+//        categoryList.add(category);
 //        List<Product> products = new ArrayList<>();
 //        products.add()
 //        category.setProducts(products);
@@ -54,12 +59,24 @@ class ProductRepositoryTest {
         product.setTitle("Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops");
         product.setPrice(109.95);
         product.setDescription("Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday");
-//        product.setCategories(category);
         product.setImageurl("https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg");
         product.setRating(rating);
+
+        Category category = new Category();
+        category.setName("men's clothing");
+
+        // Add the category to the product
+
+        product.getCategories().add(category);
+        // Add the product to the category
+//        category.getProducts().add(product);
+//        List<Category> categoryList = new ArrayList<>();
+//        categoryList.add(category);
+
+//        product.setCategories(categoryList);
+
+
         productRepository.save(product);
-        // 테스트 안되면 책 확인
-
-
+//        categoryRepository.save(category);
     }
 }

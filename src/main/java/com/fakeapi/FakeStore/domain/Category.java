@@ -16,6 +16,6 @@ public class Category {
     @Column(name = "CATEGORYNAME")
     private String name;
 
-    @ManyToMany(mappedBy = "categories")
+    @ManyToMany(mappedBy = "categories", cascade = CascadeType.ALL)
     List<Product> products = new ArrayList<Product>();
 }

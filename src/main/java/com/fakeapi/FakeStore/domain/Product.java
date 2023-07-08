@@ -28,8 +28,11 @@ public class Product {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @ManyToMany
-    @JoinColumn(name = "PRODUCT_CATEGORY")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "PRODUCT_CATEGORY",
+            joinColumns = @JoinColumn(name = "PRODUCT_ID"),
+            inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID"))
     private List<Category> categories = new ArrayList<>();
 
     @Column(name = "IMAGE")
