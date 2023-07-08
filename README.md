@@ -31,6 +31,7 @@
 
 <img width="1224" alt="image" src="https://github.com/HJC96/FakeStore/assets/87226129/d0d33252-50ea-417f-9427-08b748e4cc7e">
 
+<img width="625" alt="image" src="https://github.com/HJC96/FakeStore/assets/87226129/ebbefac4-7607-446d-994d-88705d3f5aa9">
 
 1. domain 작성
 
