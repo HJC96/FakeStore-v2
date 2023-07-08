@@ -4,10 +4,12 @@ package com.fakeapi.FakeStore.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
-@Getter
+@Getter @Setter
 @Builder
 @NoArgsConstructor
 @ToString
@@ -17,19 +19,20 @@ public class Product {
     @Column(name = "PRODUCT_ID")
     private Long id;
 
-    @Column(name = "PRICE")
-    private Double price;
     @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "DSECRIPTION")
+    @Column(name = "PRICE")
+    private Double price;
+
+    @Column(name = "DESCRIPTION")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "CATEGORY_ID")
-    private Category category;
+    @ManyToMany
+    @JoinColumn(name = "PRODUCT_CATEGORY")
+    private List<Category> categories = new ArrayList<>();
 
-    @Column(name = "IMAGEURL")
+    @Column(name = "IMAGE")
     private String imageurl;
 
     @Embedded
