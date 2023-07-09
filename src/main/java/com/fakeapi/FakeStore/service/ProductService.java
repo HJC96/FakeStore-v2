@@ -2,6 +2,8 @@ package com.fakeapi.FakeStore.service;
 
 
 import com.fakeapi.FakeStore.domain.Product;
+import com.fakeapi.FakeStore.dto.PageRequestDTO;
+import com.fakeapi.FakeStore.dto.PageResponseDTO;
 import com.fakeapi.FakeStore.dto.ProductDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,6 @@ public interface ProductService {
     Product register(ProductDTO productDTO);
     ProductDTO read(Long id);
 
-    Page<Product> list(int page, int size);
+    PageResponseDTO<ProductDTO> list(PageRequestDTO pageRequestDTO);
 
 }
