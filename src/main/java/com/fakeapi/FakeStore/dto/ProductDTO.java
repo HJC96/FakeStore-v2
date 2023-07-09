@@ -12,10 +12,10 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @NoArgsConstructor
 
-@Data
+//@Data
 //@Getter
-//@Setter
-//@ToString
+@Setter
+@ToString
 public class ProductDTO {
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +26,37 @@ public class ProductDTO {
     private String category;
     private String imageurl;
     private Rating rating;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    // double 데이터 소수점이 0인경우 정수로 출력을 위해
+    public String getPrice() {
+        if (price % 1 == 0) {
+            return String.format("%.0f", price);
+        } else {
+            return price.toString();
+        }
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getImageurl() {
+        return imageurl;
+    }
+
+    public Rating getRating() {
+        return rating;
+    }
 }
