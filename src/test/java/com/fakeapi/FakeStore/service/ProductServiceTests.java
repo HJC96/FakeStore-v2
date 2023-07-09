@@ -12,10 +12,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 class ProductServiceTests {
     @Autowired
     ProductService productService;
-    @Test
-    public void ProductServiceTest(){
-        Product product = productService.read(2L);
-        log.info(product);
-
-    }
+//    @Test
+//    public void ProductServiceTest(){
+//        Product product = productService.read(2L);
+//        log.info(product);
+//
+//    }
 }

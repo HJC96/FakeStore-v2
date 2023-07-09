@@ -31,8 +31,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product read(Long id) {
-        return productRepository.findById(id).orElseThrow();
+    public ProductDTO read(Long id) {
+        Product product = productRepository.findById(id).orElseThrow();
+        ProductDTO productDTO = modelMapper.map(product,ProductDTO.class);
+        productDTO.setCategory(product.getCategory().getName());
+
+        return productDTO;
     }
 
     @Override

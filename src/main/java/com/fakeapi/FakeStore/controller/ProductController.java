@@ -17,7 +17,7 @@ public class ProductController {
 
     private final ProductService productService;
     @GetMapping("/{id}")
-    public Product read(@PathVariable("id") Long id){
+    public ProductDTO read(@PathVariable("id") Long id){
         log.info("read id: "+ id);
         return productService.read(id);
     }
