@@ -35,14 +35,22 @@ public class ProductDTO {
         return title;
     }
 
-    // double 데이터 소수점이 0인경우 정수로 출력을 위해
-    public String getPrice() {
-        if (price % 1 == 0) {
-            return String.format("%.0f", price);
-        } else {
-            return price.toString();
-        }
+//     double데이터 소수점이 0인경우 정수로 출력을 위해
+//    public String getPriceAsString() {
+//        if (price % 1 == 0) {
+//            return String.format("%.0f", price);
+//        } else {
+//            return price.toString();
+//        }
+//    }
+
+    public Double getPrice() {
+        return price;
     }
+
+//    public String getPrice() {
+//        return price;
+//    }
 
     public String getDescription() {
         return description;

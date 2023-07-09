@@ -1,6 +1,8 @@
 package com.fakeapi.FakeStore.controller;
 
 import com.fakeapi.FakeStore.domain.Product;
+import com.fakeapi.FakeStore.dto.PageRequestDTO;
+import com.fakeapi.FakeStore.dto.PageResponseDTO;
 import com.fakeapi.FakeStore.dto.ProductDTO;
 import com.fakeapi.FakeStore.service.ProductService;
 import com.fakeapi.FakeStore.service.ProductServiceImpl;
@@ -22,25 +24,24 @@ public class ProductController {
         return productService.read(id);
     }
 
-    @GetMapping
-    public Page<Product> read_limit(@RequestParam(value="limit",required = false, defaultValue = "0") int limit, @RequestParam(required = false, defaultValue = "0") int page){
-        int size=10;
-        if(limit != 0)
-            return productService.list(page, limit);
-        else
-            return productService.list(page, size);
-    }
-
-    @PostMapping
-    public Product registerProduct(ProductDTO productDTO){
-        return productService.register(productDTO);
-    }
-//
 //    @GetMapping
-//    public Page<Product> list(@RequestParam(required = false, defaultValue = "0") Long id, @RequestParam(required = false, defaultValue = "0") int page) {
+//    public Page<Product> read_limit(@RequestParam(value="limit",required = false, defaultValue = "0") int limit, @RequestParam(required = false, defaultValue = "0") int page){
 //        int size=10;
-//        return productService.list(page, size);
+//        if(limit != 0)
+//            return productService.list(page, limit);
+//        else
+//            return productService.list(page, size);
 //    }
+
+//    @PostMapping
+//    public Product registerProduct(ProductDTO productDTO){
+//        return productService.register(productDTO);
+//    }
+
+    @GetMapping
+    public PageResponseDTO<ProductDTO> list(PageRequestDTO pageRequestDTO) {
+        return productService.list(pageRequestDTO);
+    }
 
 
 

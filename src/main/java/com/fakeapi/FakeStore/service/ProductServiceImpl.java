@@ -2,6 +2,8 @@ package com.fakeapi.FakeStore.service;
 
 import com.fakeapi.FakeStore.domain.Product;
 
+import com.fakeapi.FakeStore.dto.PageRequestDTO;
+import com.fakeapi.FakeStore.dto.PageResponseDTO;
 import com.fakeapi.FakeStore.dto.ProductDTO;
 import com.fakeapi.FakeStore.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +41,16 @@ public class ProductServiceImpl implements ProductService {
         return productDTO;
     }
 
+
     @Override
-    public Page<Product> list(int page, int size) {
-        return productRepository.findAll(PageRequest.of(page,size));
+    public PageResponseDTO<ProductDTO> list(PageRequestDTO pageRequestDTO) {
+//        Page<ProductDTO> result = productRepository.findAll(PageRequest.of(pageRequestDTO.getPage(),pageRequestDTO.getSize()));
+        Page<ProductDTO> result = productRepository.list(pageRequestDTO);
+
+        return PageResponseDTO.<ProductDTO>builder()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(result.toList())
+                .total((int)result.getTotalElements())
+                .build();
     }
 }
