@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 @Transactional
 public interface ProductService {
     Product register(ProductDTO productDTO);
-    Product read(Long id);
+    ProductDTO read(Long id);
 
     Page<Product> list(int page, int size);
 

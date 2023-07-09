@@ -1,6 +1,7 @@
 package com.fakeapi.FakeStore.dto;
 
 
+import com.fakeapi.FakeStore.domain.Rating;
 import lombok.*;
 
 import javax.persistence.GeneratedValue;
@@ -18,7 +19,11 @@ import javax.persistence.Id;
 public class ProductDTO {
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-    private Double price;
+    private Long id;
     private String title;
+    private Double price;
+    private String description;
+    private String category;
+    private String imageurl;
+    private Rating rating;
 }
