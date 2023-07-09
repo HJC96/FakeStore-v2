@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @Transactional
@@ -16,6 +17,6 @@ public interface ProductService {
     Product register(ProductDTO productDTO);
     ProductDTO read(Long id);
 
-    PageResponseDTO<ProductDTO> list(PageRequestDTO pageRequestDTO);
-
+//    PageResponseDTO<ProductDTO> list(PageRequestDTO pageRequestDTO);
+    public List<ProductDTO> list() ;
 }
