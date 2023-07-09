@@ -5,12 +5,14 @@ import com.fakeapi.FakeStore.domain.Product;
 import com.fakeapi.FakeStore.domain.Rating;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class CategoryRepositoryTest {
 
     @Autowired
@@ -22,10 +24,6 @@ class CategoryRepositoryTest {
 
         Category category = new Category();
         category.setName("men's clothing");
-//        List<Category> categoryList = new ArrayList<>();
-//        categoryList.add(category);
-
-//        product.setCategories(categoryList);
 
         categoryRepository.save(category);
     }
