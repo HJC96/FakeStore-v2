@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,7 @@ class ProductRepositoryTest {
 //
 //    }
     @Test
+//    @Transactional
     public void testProductRepository(){
 //        Category category = new Category();
 //
@@ -55,19 +57,23 @@ class ProductRepositoryTest {
         rating.setRate(3.9);
         rating.setCount(120);
 
+        Category category = new Category();
+        category.setName("men's clothing");
+        // Save category
+//        categoryRepository.save(category);
+
+
         Product product = new Product();
         product.setTitle("Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops");
         product.setPrice(109.95);
         product.setDescription("Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday");
         product.setImageurl("https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg");
         product.setRating(rating);
+        product.setCategory(category);
 
-        Category category = new Category();
-        category.setName("men's clothing");
 
         // Add the category to the product
 
-        product.getCategories().add(category);
         // Add the product to the category
 //        category.getProducts().add(product);
 //        List<Category> categoryList = new ArrayList<>();
