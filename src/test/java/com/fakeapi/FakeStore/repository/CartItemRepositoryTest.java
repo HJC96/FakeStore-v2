@@ -1,6 +1,7 @@
 package com.fakeapi.FakeStore.repository;
 
-import com.fakeapi.FakeStore.domain.CartItem;
+import com.fakeapi.FakeStore.cart.repository.CartItemRepository;
+import com.fakeapi.FakeStore.cart.domain.CartItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,10 @@
 package com.fakeapi.FakeStore.repository;
 
-import com.fakeapi.FakeStore.domain.Category;
-import com.fakeapi.FakeStore.domain.Product;
-import com.fakeapi.FakeStore.domain.Rating;
+import com.fakeapi.FakeStore.product.domain.Category;
+import com.fakeapi.FakeStore.product.domain.Product;
+import com.fakeapi.FakeStore.product.domain.Rating;
+import com.fakeapi.FakeStore.product.repository.CategoryRepository;
+import com.fakeapi.FakeStore.product.repository.ProductRepository;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

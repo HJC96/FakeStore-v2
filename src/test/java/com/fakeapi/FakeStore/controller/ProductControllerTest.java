@@ -1,9 +1,10 @@
 package com.fakeapi.FakeStore.controller;
 
-import com.fakeapi.FakeStore.domain.Rating;
-import com.fakeapi.FakeStore.dto.ProductDTO;
-import com.fakeapi.FakeStore.service.CategoryService;
-import com.fakeapi.FakeStore.service.ProductService;
+import com.fakeapi.FakeStore.product.domain.Rating;
+import com.fakeapi.FakeStore.product.dto.ProductDTO;
+import com.fakeapi.FakeStore.product.controller.ProductController;
+import com.fakeapi.FakeStore.product.service.CategoryService;
+import com.fakeapi.FakeStore.product.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

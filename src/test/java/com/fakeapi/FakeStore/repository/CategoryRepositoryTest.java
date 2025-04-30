@@ -1,15 +1,11 @@
 package com.fakeapi.FakeStore.repository;
 
-import com.fakeapi.FakeStore.domain.Category;
-import com.fakeapi.FakeStore.domain.Product;
-import com.fakeapi.FakeStore.domain.Rating;
+import com.fakeapi.FakeStore.product.domain.Category;
+import com.fakeapi.FakeStore.product.repository.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

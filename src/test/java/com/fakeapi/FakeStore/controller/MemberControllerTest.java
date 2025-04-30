@@ -1,11 +1,10 @@
 package com.fakeapi.FakeStore.controller;
 
-import com.fakeapi.FakeStore.domain.Member;
-import com.fakeapi.FakeStore.domain.RefreshToken;
-import com.fakeapi.FakeStore.dto.*;
-import com.fakeapi.FakeStore.security.jwt.util.JwtTokenizer;
-import com.fakeapi.FakeStore.service.MemberService;
-import com.fakeapi.FakeStore.service.RefreshTokenService;
+import com.fakeapi.FakeStore.member.domain.Member;
+import com.fakeapi.FakeStore.member.dto.request.MemberSignUpDTO;
+import com.fakeapi.FakeStore.common.util.JwtTokenizer;
+import com.fakeapi.FakeStore.member.service.MemberService;
+import com.fakeapi.FakeStore.common.token.service.RefreshTokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;

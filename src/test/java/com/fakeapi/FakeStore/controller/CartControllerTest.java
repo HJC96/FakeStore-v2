@@ -1,9 +1,10 @@
 package com.fakeapi.FakeStore.controller;
 
-import com.fakeapi.FakeStore.dto.CartDTO;
-import com.fakeapi.FakeStore.dto.PageRequestDTO;
-import com.fakeapi.FakeStore.dto.PageResponseDTO;
-import com.fakeapi.FakeStore.service.CartService;
+import com.fakeapi.FakeStore.cart.controller.CartController;
+import com.fakeapi.FakeStore.cart.dto.CartDTO;
+import com.fakeapi.FakeStore.common.dto.PageRequestDTO;
+import com.fakeapi.FakeStore.common.dto.PageResponseDTO;
+import com.fakeapi.FakeStore.cart.service.CartService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

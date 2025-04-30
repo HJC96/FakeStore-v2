@@ -1,7 +1,8 @@
 package com.fakeapi.FakeStore.repository;
 
-import com.fakeapi.FakeStore.domain.Member;
-import com.fakeapi.FakeStore.domain.Role;
+import com.fakeapi.FakeStore.member.domain.Member;
+import com.fakeapi.FakeStore.member.domain.Role;
+import com.fakeapi.FakeStore.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
