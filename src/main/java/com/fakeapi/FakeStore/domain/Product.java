@@ -1,10 +1,8 @@
 package com.fakeapi.FakeStore.domain;
 
 
-import jakarta.annotation.Nullable;
-import lombok.*;
-
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @AllArgsConstructor

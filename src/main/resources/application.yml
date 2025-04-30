@@ -22,7 +22,11 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     hibernate:
       ddl-auto: create
+    defer-datasource-initialization: true # data.sql 실행을 테이블 생성 이후로 미룸
 
+  sql:
+    init:
+      mode: always
 jwt:
   secretKey: 11333331111111111111111111111122
   refreshKey: 11333331111111111111111111111122
