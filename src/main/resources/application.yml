@@ -1,0 +1,33 @@
+server:
+  port: 8080
+  tomcat:
+    connection-timeout: 30s
+    threads:
+      max: 100
+      min-spare: 100
+    accesslog:
+      enabled: true
+      suffix: log
+      prefix: access_log
+      rename-on-rotate: true
+
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/fakestore
+    username: storeuser
+    password: storepass
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: create
+
+jwt:
+  secretKey: 11333331111111111111111111111122
+  refreshKey: 11333331111111111111111111111122
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    com.fakeapi.FakeStore: DEBUG
