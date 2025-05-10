@@ -30,34 +30,7 @@ public class ProductSearchImpl extends QuerydslRepositorySupport implements Prod
         QCategory category = QCategory.category; // Category에 대한 Querydsl 객체 생성
 
         JPQLQuery<Product> query = from(product).leftJoin(product.category, category);
-//
-//        if(pageRequestDTO.getFrom() != null && pageRequestDTO.getTo() != null){
-//
-//            BooleanBuilder fromToBuilder = new BooleanBuilder();
-//            fromToBuilder.and(product.dueDate.goe(pageRequestDTO.getFrom()));
-//            fromToBuilder.and(product.dueDate.loe(pageRequestDTO.getTo()));
-//            query.where(fromToBuilder);
-//        }
-//
-//        if(pageRequestDTO.getCompleted() != null){
-//            query.where(product.complete.eq(pageRequestDTO.getCompleted()));
-//        }
-//
-//        if(pageRequestDTO.getKeyword() != null){
-//            query.where(product.title.contains(pageRequestDTO.getKeyword()));
-//        }
-//
-//        this.getQuerydsl().applyPagination(pageRequestDTO.getPageable("id"), query);
-//
-//        JPQLQuery<Product> dtoQuery = query.select(Projections.bean(TodoDTO.class,
-//                product.tno,
-//                product.title,
-//                product.dueDate,
-//                product.complete,
-//                product.writer
-//        ));
         //paging
-
         this.getQuerydsl().applyPagination(pageRequestDTO.getPageable("id"), query);
 
         JPQLQuery<ProductDTO> dtoQuery = query.select(Projections.bean(ProductDTO.class,
@@ -65,15 +38,13 @@ public class ProductSearchImpl extends QuerydslRepositorySupport implements Prod
                 product.title,
                 product.price,
                 product.description,
-//                product.category.name
-                category.name,
+                category.name.as("category"), // Category의 name을 category로 매핑
                 product.image,
                 product.rating
         ));
 
 
         List<ProductDTO> list = dtoQuery.fetch();
-//        for(ProductDTO productDTO:list) System.out.println(productDTO.getCategory());
         long count = dtoQuery.fetchCount();
         return new PageImpl<>(list, pageRequestDTO.getPageable("id"), count);
     }
