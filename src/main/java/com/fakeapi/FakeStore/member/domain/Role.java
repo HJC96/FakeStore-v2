@@ -1,18 +1,17 @@
 package com.fakeapi.FakeStore.member.domain;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
-@Getter @Setter
-//@Table(name = "ROLE")
+@Table(name = "role")
+@Getter
 public class Role {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ROLE_ID")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id")
     private Long id;
 
-    @Column(name = "ROLENAME")
+    @Column(name = "role_name")
     private String name;
 }
