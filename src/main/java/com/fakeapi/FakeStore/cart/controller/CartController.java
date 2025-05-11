@@ -35,30 +35,31 @@ public class CartController {
         return cartService.read(id);
     }
 
-//    @GetMapping(params = "limit")
-//    public PageResponseDTO<CartDTO> readLimit(
-//            @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
-//            PageRequestDTO pageRequestDTO) {
-//        if (limit > 0)
-//            return cartService.listWithLimitCart(pageRequestDTO, limit);
-//        else
-//            return cartService.list(pageRequestDTO);
-//    }
+    @GetMapping
+    public PageResponseDTO<CartDTO> listCarts(
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "sort", required = false, defaultValue = "asc") String sort,
+            @RequestParam(value = "startdate", required = false) String start,
+            @RequestParam(value = "enddate", required = false) String end,
+            PageRequestDTO pageRequestDTO) {
 
-//    @GetMapping
-//    public PageResponseDTO<CartDTO> list(PageRequestDTO pageRequestDTO) {
-//        return cartService.list(pageRequestDTO);
-//    }
+        // 정렬 설정
+        pageRequestDTO.setSort(sort);
 
-//    @GetMapping(params = "sort")
-//    public PageResponseDTO<CartDTO> listSortedCarts(
-//            @RequestParam(value = "sort", defaultValue = "asc") String sort,
-//            PageRequestDTO pageRequestDTO) {
-//
-//        pageRequestDTO.setSort(sort);
-//
-//        return cartService.list(pageRequestDTO);
-//    }
+        // 날짜 필터링
+        if (start != null && end != null) {
+            LocalDateTime startDate = LocalDate.parse(start).atStartOfDay();
+            LocalDateTime endDate = LocalDate.parse(end).plusDays(1).atStartOfDay(); // inclusive
+            return cartService.listWithDateRange(pageRequestDTO, startDate, endDate);
+        }
+
+        // 제한 개수 필터링
+        if (limit != null && limit > 0) {
+            return cartService.listWithLimitCart(pageRequestDTO, limit);
+        }
+
+        return cartService.list(pageRequestDTO);
+    }
 
     @PostMapping
     public Cart registerCart(@RequestBody @Valid CartDTO cartDTO) {
@@ -79,18 +80,6 @@ public class CartController {
     public ResponseEntity delete(@PathVariable("id") Long id) {
         cartService.delete(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
-    }
-
-
-    @GetMapping(params = {"startdate", "enddate"})
-    public PageResponseDTO<CartDTO> listFilteredCarts(@RequestParam(value = "startdate") String start,
-                                                      @RequestParam(value = "enddate") String end,
-                                                      PageRequestDTO pageRequestDTO) {
-
-        LocalDateTime startDate = LocalDate.parse(start).atStartOfDay(); // 여기서 변환
-        LocalDateTime endDate = LocalDate.parse(end).plusDays(1).atStartOfDay(); // 다음 날의 시작 시간까지 포함
-
-        return cartService.listWithDateRange(pageRequestDTO, startDate, endDate);
     }
 
 

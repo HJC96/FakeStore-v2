@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Log4j2
@@ -49,25 +50,18 @@ public class ProductController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping(params = "limit")
-    public PageResponseDTO<ProductDTO> readLimit(
-            @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
-            PageRequestDTO pageRequestDTO) {
-        if (limit > 0)
-            return productService.listWithLimitProduct(pageRequestDTO, limit);
-        else
-            return productService.list(pageRequestDTO);
-    }
-
     @GetMapping
-    public PageResponseDTO<ProductDTO> list(PageRequestDTO pageRequestDTO) {
-        return productService.list(pageRequestDTO);
-    }
+    public PageResponseDTO<ProductDTO> listProducts(
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "sort", required = false, defaultValue = "asc") String sort,
+            PageRequestDTO pageRequestDTO) {
 
-    @GetMapping(params = "sort")
-    public PageResponseDTO<ProductDTO> listSortedProducts(@RequestParam(value = "sort", defaultValue = "asc") String sort,
-                                                          PageRequestDTO pageRequestDTO) {
         pageRequestDTO.setSort(sort);
+
+        if (limit != null && limit > 0) {
+            return productService.listWithLimitProduct(pageRequestDTO, limit);
+        }
+
         return productService.list(pageRequestDTO);
     }
 
@@ -82,10 +76,10 @@ public class ProductController {
         return categoryService.list();
     }
 
-//    @GetMapping("/category/{id}")
-//    public Optional<Category> readId_category(@PathVariable("id") Long id) {
-//        return categoryService.read(id);
-//    }
+    @GetMapping("/category/{id}")
+    public Optional<Category> readId_category(@PathVariable("id") Long id) {
+        return categoryService.read(id);
+    }
 
 
     @GetMapping("/category/{categoryName}")
