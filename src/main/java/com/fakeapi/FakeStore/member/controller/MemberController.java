@@ -6,6 +6,7 @@ import com.fakeapi.FakeStore.common.token.service.RefreshTokenService;
 import com.fakeapi.FakeStore.common.util.IfLogin;
 import com.fakeapi.FakeStore.common.util.JwtTokenizer;
 import com.fakeapi.FakeStore.member.domain.Member;
+import com.fakeapi.FakeStore.member.domain.MemberRole;
 import com.fakeapi.FakeStore.member.domain.Role;
 import com.fakeapi.FakeStore.member.dto.LoginUserDTO;
 import com.fakeapi.FakeStore.member.dto.request.MemberLoginDTO;
@@ -25,7 +26,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -70,7 +70,7 @@ public class MemberController {
         }
 
         // List<Role> ===> List<String>
-        List<String> roles = member.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+        List<String> roles = member.getMemberRoles().stream().map(MemberRole::getRole).map(Role::getName).toList();
 
         // JWT토큰을 생성하였다. jwt라이브러리를 이용하여 생성.
         String accessToken = jwtTokenizer.createAccessToken(member.getId(), member.getEmail(), member.getName(), roles);

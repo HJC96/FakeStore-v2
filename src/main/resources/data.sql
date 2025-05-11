@@ -97,3 +97,22 @@ INSERT INTO cart_item (quantity, cart_id, product_id) VALUES
 (2, 6, 10),
 (3, 6, 12),
 (1, 7, 18);
+
+-- role 데이터 생성
+INSERT INTO role (role_name) VALUES
+('ROLE_USER'),
+('ROLE_ADMIN');
+
+-- member_role 관계 생성
+INSERT INTO member_role (member_id, role_id) VALUES
+(1, 1), -- john: ROLE_USER
+(2, 1), -- morrison: ROLE_USER
+(3, 2), -- kevin: ROLE_ADMIN
+(4, 1), -- don: ROLE_USER
+(5, 1), -- derek: ROLE_USER
+(6, 1), -- david_r: ROLE_USER
+(7, 1), -- miriam: ROLE_USER
+(8, 1), -- william: ROLE_USER
+(9, 1), -- kate: ROLE_USER
+(10, 1); -- jimmie: ROLE_USER
+

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,13 +22,8 @@ public class Member {
     private String password;
     private String phone;
 
-    @ManyToMany
-    @JoinTable(
-            name = "role", // 연결 테이블
-            joinColumns = @JoinColumn(name = "member_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles;
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<MemberRole> memberRoles = new HashSet<>();
 
     private String name;
 
@@ -35,6 +31,7 @@ public class Member {
     private Address address;
 
     public void addRole(Role role) {
-        roles.add(role);
+        MemberRole memberRole = new MemberRole(this, role);
+        this.memberRoles.add(memberRole);
     }
 }
