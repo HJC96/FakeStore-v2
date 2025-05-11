@@ -13,8 +13,21 @@
 - 기존 계층별 단순 디렉토리 구조 (`controller`, `service`, `repository` 등)에서, **도메인 중심 디렉토리 구조**로 개편
     - ex) `member/`, `product/`, `cart/` 하위에 각각 `controller`, `service`, `dto`, `domain`, `repository` 배치
 
+### ✅ 리팩토링
+- 사용하지 않는 코드 및 주석 제거
+- Querydsl 사용 방식을 `QuerydslRepositorySupport` → `JPAQueryFactory` 주입 방식으로 전환
+
 
 ---
 ## ⚙️ 기술 스택
+- Backend: Java 21, Spring Boot 3.4.5
+- DB & ORM: MariaDB, JPA, QueryDSL
+- Security: Spring Security, JWT
+- API Docs: Swagger (SpringDoc OpenAPI)
+
+
 
 ## 🚀 실행 방법
+
+
+
