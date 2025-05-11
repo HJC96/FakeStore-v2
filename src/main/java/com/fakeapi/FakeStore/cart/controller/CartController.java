@@ -5,6 +5,7 @@ import com.fakeapi.FakeStore.cart.dto.CartDTO;
 import com.fakeapi.FakeStore.cart.service.CartService;
 import com.fakeapi.FakeStore.common.dto.PageRequestDTO;
 import com.fakeapi.FakeStore.common.dto.PageResponseDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -33,30 +35,30 @@ public class CartController {
         return cartService.read(id);
     }
 
-    @GetMapping(params = "limit")
-    public PageResponseDTO<CartDTO> readLimit(
-            @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
-            PageRequestDTO pageRequestDTO) {
-        if (limit > 0)
-            return cartService.listWithLimitCart(pageRequestDTO, limit);
-        else
-            return cartService.list(pageRequestDTO);
-    }
+//    @GetMapping(params = "limit")
+//    public PageResponseDTO<CartDTO> readLimit(
+//            @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
+//            PageRequestDTO pageRequestDTO) {
+//        if (limit > 0)
+//            return cartService.listWithLimitCart(pageRequestDTO, limit);
+//        else
+//            return cartService.list(pageRequestDTO);
+//    }
 
-    @GetMapping
-    public PageResponseDTO<CartDTO> list(PageRequestDTO pageRequestDTO) {
-        return cartService.list(pageRequestDTO);
-    }
+//    @GetMapping
+//    public PageResponseDTO<CartDTO> list(PageRequestDTO pageRequestDTO) {
+//        return cartService.list(pageRequestDTO);
+//    }
 
-    @GetMapping(params = "sort")
-    public PageResponseDTO<CartDTO> listSortedCarts(
-            @RequestParam(value = "sort", defaultValue = "asc") String sort,
-            PageRequestDTO pageRequestDTO) {
-
-        pageRequestDTO.setSort(sort);
-
-        return cartService.list(pageRequestDTO);
-    }
+//    @GetMapping(params = "sort")
+//    public PageResponseDTO<CartDTO> listSortedCarts(
+//            @RequestParam(value = "sort", defaultValue = "asc") String sort,
+//            PageRequestDTO pageRequestDTO) {
+//
+//        pageRequestDTO.setSort(sort);
+//
+//        return cartService.list(pageRequestDTO);
+//    }
 
     @PostMapping
     public Cart registerCart(@RequestBody @Valid CartDTO cartDTO) {
@@ -81,8 +83,8 @@ public class CartController {
 
 
     @GetMapping(params = {"startdate", "enddate"})
-    public PageResponseDTO<CartDTO> listFilteredCarts(@RequestParam(value = "startdate", required = false) String start,
-                                                      @RequestParam(value = "enddate", required = false) String end,
+    public PageResponseDTO<CartDTO> listFilteredCarts(@RequestParam(value = "startdate") String start,
+                                                      @RequestParam(value = "enddate") String end,
                                                       PageRequestDTO pageRequestDTO) {
 
         LocalDateTime startDate = LocalDate.parse(start).atStartOfDay(); // 여기서 변환
