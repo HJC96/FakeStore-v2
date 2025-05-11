@@ -12,12 +12,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-import static org.springframework.http.HttpMethod.*;
+import static org.springframework.http.HttpMethod.OPTIONS;
 
 @Configuration
 @RequiredArgsConstructor
@@ -34,19 +33,22 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                 .httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.disable())
-                .authorizeHttpRequests(httpRequests -> httpRequests
-                        .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Preflight 요청은 허용한다. https://velog.io/@jijang/%EC%82%AC%EC%A0%84-%EC%9A%94%EC%B2%AD-Preflight-request
-                        .requestMatchers("/members/signup", "/members/login", "/members/refreshToken").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        // 공개 API
+                        .requestMatchers("/members/login", "/members/signup", "/members/refreshToken").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
-                        .requestMatchers(GET, "/products/**", "/carts/**").permitAll()
-                        .requestMatchers(PUT, "/products/**", "/carts/**").permitAll()
-                        .requestMatchers(PATCH, "/products/**", "/carts/**").permitAll()
-                        .requestMatchers(DELETE, "/products/**", "/carts/**").permitAll()
-                        .requestMatchers(POST, "/products/**", "/carts/**").permitAll() // test
-                        .requestMatchers(GET, "/**").hasAnyRole("USER")
-                        .requestMatchers(POST, "/**").hasAnyRole("USER", "ADMIN")
+
+                        // 인증 필요 API
+                        .requestMatchers("/products/**", "/carts/**").authenticated()
+                        .requestMatchers("/orders/**").hasRole("USER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        // OPTIONS preflight는 항상 허용
                         .requestMatchers(OPTIONS, "/**").permitAll()
-                        .anyRequest().hasAnyRole("USER", "ADMIN"))
+
+                        // 그 외 요청은 기본적으로 인증 필요
+                        .anyRequest().authenticated()
+                )
                 .exceptionHandling(config -> config
                         .authenticationEntryPoint(customAuthenticationEntryPoint)  // 401
                         .accessDeniedHandler(new AccessDeniedHandlerImpl())           // 403

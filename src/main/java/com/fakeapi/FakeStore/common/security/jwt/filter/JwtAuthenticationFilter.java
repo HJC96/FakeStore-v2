@@ -32,10 +32,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = "";
         try {
             token = getToken(request);
-            if (StringUtils.hasText(token)) {
-                getAuthentication(token);
+            if (!StringUtils.hasText(token)) {
+                // 토큰이 없으면 인증을 시도하지 않고 다음 필터로 넘김
                 filterChain.doFilter(request, response);
+                return;
             }
+            // 토큰이 있으면 인증 수행
+            getAuthentication(token);
+            filterChain.doFilter(request, response);
         } catch (NullPointerException | IllegalStateException e) {
             request.setAttribute("exception", JwtExceptionCode.NOT_FOUND_TOKEN.getCode());
             log.error("Not found Token // token : {}", token);
@@ -80,7 +84,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String getToken(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
         if (!StringUtils.hasText(authorization)) {
-            throw new NullPointerException("Authorization header is missing");
+            return null;
         }
         if (!authorization.toLowerCase().startsWith("bearer ")) {
             throw new UnsupportedJwtException("Authorization header must start with Bearer");
