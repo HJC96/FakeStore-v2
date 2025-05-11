@@ -1,14 +1,16 @@
 package com.fakeapi.FakeStore.cart.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data @AllArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class CartItemDTO {
-
+    @JsonIgnore
+    private Long cartId;
     private Long productId;
     private int quantity;
-
 }
