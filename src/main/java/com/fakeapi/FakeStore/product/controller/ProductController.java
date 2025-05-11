@@ -1,9 +1,9 @@
 package com.fakeapi.FakeStore.product.controller;
 
-import com.fakeapi.FakeStore.product.domain.Category;
-import com.fakeapi.FakeStore.product.domain.Product;
 import com.fakeapi.FakeStore.common.dto.PageRequestDTO;
 import com.fakeapi.FakeStore.common.dto.PageResponseDTO;
+import com.fakeapi.FakeStore.product.domain.Category;
+import com.fakeapi.FakeStore.product.domain.Product;
 import com.fakeapi.FakeStore.product.dto.ProductDTO;
 import com.fakeapi.FakeStore.product.service.CategoryService;
 import com.fakeapi.FakeStore.product.service.ProductService;
@@ -24,34 +24,36 @@ public class ProductController {
 
     private final ProductService productService;
     private final CategoryService categoryService;
-    //Product
 
+    //Product
     @GetMapping("/{id}")
-    public ProductDTO read(@PathVariable("id") Long id){
-        log.info("read id: "+ id);
+    public ProductDTO read(@PathVariable("id") Long id) {
+        log.info("read id: " + id);
         return productService.read(id);
     }
-    @PutMapping("/{id}") // PUT은 일반적으로 리소스 전체를 업데이트 하는데 사용
-    public ProductDTO updatePut(@PathVariable("id") Long id, @RequestBody @Valid ProductDTO productDTO){
+
+    @PutMapping("/{id}")
+    public ProductDTO updatePut(@PathVariable("id") Long id, @RequestBody @Valid ProductDTO productDTO) {
         return productService.update(id, productDTO);
     }
 
-    @PatchMapping("{id}") // PATCH는 일반적으로 리소스 일부를 업데이트 하는데 사용
-    public ProductDTO updatePatch(@PathVariable("id") Long id, @RequestBody @Valid ProductDTO productDTO){
+    @PatchMapping("{id}")
+    public ProductDTO updatePatch(@PathVariable("id") Long id, @RequestBody @Valid ProductDTO productDTO) {
         return productService.update(id, productDTO);
     }
 
     //DELETE 시 CATEGORY_ID 테이블때문에 삭제 안되는 이슈
     @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable("id") Long id){
+    public ResponseEntity delete(@PathVariable("id") Long id) {
         productService.delete(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
+
     @GetMapping(params = "limit")
     public PageResponseDTO<ProductDTO> readLimit(
-            @RequestParam(value="limit",required = false, defaultValue = "10") int limit,
-            PageRequestDTO pageRequestDTO){
-        if(limit > 0)
+            @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
+            PageRequestDTO pageRequestDTO) {
+        if (limit > 0)
             return productService.listWithLimitProduct(pageRequestDTO, limit);
         else
             return productService.list(pageRequestDTO);
@@ -63,23 +65,20 @@ public class ProductController {
     }
 
     @GetMapping(params = "sort")
-    public PageResponseDTO<ProductDTO> listSortedProducts(
-            @RequestParam(value="sort", defaultValue = "asc") String sort,
-            PageRequestDTO pageRequestDTO) {
-
+    public PageResponseDTO<ProductDTO> listSortedProducts(@RequestParam(value = "sort", defaultValue = "asc") String sort,
+                                                          PageRequestDTO pageRequestDTO) {
         pageRequestDTO.setSort(sort);
-
         return productService.list(pageRequestDTO);
     }
 
     @PostMapping
-    public Product registerProduct(@RequestBody @Valid ProductDTO productDTO){
+    public Product registerProduct(@RequestBody @Valid ProductDTO productDTO) {
         return productService.register(productDTO);
     }
 
     // Category
     @GetMapping("/categories")
-    public List<Category> categoryList( ) {
+    public List<Category> categoryList() {
         return categoryService.list();
     }
 
@@ -90,7 +89,7 @@ public class ProductController {
 
 
     @GetMapping("/category/{categoryName}")
-    public List<ProductDTO> readName_category(@PathVariable("categoryName") String categoryName){
+    public List<ProductDTO> readName_category(@PathVariable("categoryName") String categoryName) {
         return productService.listByCategoryName(categoryName);
     }
 }
