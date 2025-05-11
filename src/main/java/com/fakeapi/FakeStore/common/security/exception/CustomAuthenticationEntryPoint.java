@@ -1,14 +1,14 @@
 package com.fakeapi.FakeStore.common.security.exception;
 
 import com.google.gson.Gson;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -19,7 +19,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         String exception = (String) request.getAttribute("exception");
 
-        if(exception != null) {
+        if (exception != null) {
             log.error("Commence Get Exception : {}", exception);
             log.error("entry point >> not found token");
 
@@ -42,6 +42,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             } else {
                 setResponse(response, JwtExceptionCode.UNKNOWN_ERROR);
             }
+        } else {
+            log.error("entry point >> no exception attribute found (probably no token)");
+            setResponse(response, JwtExceptionCode.UNKNOWN_ERROR);
         }
     }
 

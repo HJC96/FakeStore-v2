@@ -9,6 +9,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
@@ -46,7 +47,10 @@ public class SecurityConfig {
                         .requestMatchers(POST, "/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(OPTIONS, "/**").permitAll()
                         .anyRequest().hasAnyRole("USER", "ADMIN"))
-                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint))
+                .exceptionHandling(config -> config
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)  // 401
+                        .accessDeniedHandler(new AccessDeniedHandlerImpl())           // 403
+                )
                 .apply(authenticationManagerConfig);
 
         return httpSecurity.build();

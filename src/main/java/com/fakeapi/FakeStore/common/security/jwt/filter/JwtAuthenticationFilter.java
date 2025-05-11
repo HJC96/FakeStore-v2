@@ -5,6 +5,10 @@ import com.fakeapi.FakeStore.common.security.jwt.token.JwtAuthenticationToken;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,10 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RequiredArgsConstructor
@@ -29,15 +29,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String token="";
+        String token = "";
         try {
             token = getToken(request);
             if (StringUtils.hasText(token)) {
                 getAuthentication(token);
+                filterChain.doFilter(request, response);
             }
-            filterChain.doFilter(request, response);
-        }
-        catch (NullPointerException | IllegalStateException e) {
+        } catch (NullPointerException | IllegalStateException e) {
             request.setAttribute("exception", JwtExceptionCode.NOT_FOUND_TOKEN.getCode());
             log.error("Not found Token // token : {}", token);
             log.error("Set Request Exception Code : {}", request.getAttribute("exception"));
@@ -80,10 +79,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String getToken(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
-        if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer")){
-            String[] arr = authorization.split(" ");
-            return arr[1];
+        if (!StringUtils.hasText(authorization)) {
+            throw new NullPointerException("Authorization header is missing");
         }
-        return null;
+        if (!authorization.toLowerCase().startsWith("bearer ")) {
+            throw new UnsupportedJwtException("Authorization header must start with Bearer");
+        }
+        String token = authorization.substring(7).trim(); // "Bearer " 다음부터 잘라냄
+        if (!StringUtils.hasText(token)) {
+            throw new MalformedJwtException("JWT token is empty after 'Bearer'");
+        }
+        return token;
     }
 }
