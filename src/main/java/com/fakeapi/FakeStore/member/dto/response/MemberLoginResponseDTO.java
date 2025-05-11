@@ -5,12 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemberLoginResponseDTO {
-
-        private String accessToken;
-        private String refreshToken;
-        private Long memberId;
-        private String nickname;
+    private String accessToken;
+    private String refreshToken;
 }

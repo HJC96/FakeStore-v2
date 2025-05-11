@@ -50,7 +50,6 @@ public class MemberController {
         MemberSignUpResponseDTO memberSignupResponseDTO = new MemberSignUpResponseDTO();
         memberSignupResponseDTO.setMemberId(saveMember.getId());
         memberSignupResponseDTO.setName(saveMember.getUsername());
-//        memberSignupResponseDTO.setRegdate(saveMember.getDate());
         memberSignupResponseDTO.setEmail(saveMember.getEmail());
 
         // 회원가입
@@ -85,8 +84,6 @@ public class MemberController {
         MemberLoginResponseDTO loginResponse = MemberLoginResponseDTO.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .memberId(member.getId())
-                .nickname(member.getName())
                 .build();
         return new ResponseEntity(loginResponse, HttpStatus.OK);
     }
@@ -129,8 +126,6 @@ public class MemberController {
         MemberLoginResponseDTO memberLoginResponseDTO = MemberLoginResponseDTO.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshTokenDTO.getRefreshToken())
-                .memberId(member.getId())
-                .nickname(member.getName())
                 .build();
         return new ResponseEntity(memberLoginResponseDTO, HttpStatus.OK);
     }
