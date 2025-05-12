@@ -1,16 +1,16 @@
 package com.fakeapi.FakeStore.cart.service.impl;
 
-import com.fakeapi.FakeStore.cart.dto.CartDTO;
-import com.fakeapi.FakeStore.cart.dto.CartItemDTO;
-import com.fakeapi.FakeStore.cart.service.CartService;
 import com.fakeapi.FakeStore.cart.domain.Cart;
 import com.fakeapi.FakeStore.cart.domain.CartItem;
-import com.fakeapi.FakeStore.common.dto.PageRequestDTO;
-import com.fakeapi.FakeStore.common.dto.PageResponseDTO;
+import com.fakeapi.FakeStore.cart.dto.CartDTO;
+import com.fakeapi.FakeStore.cart.dto.CartItemDTO;
 import com.fakeapi.FakeStore.cart.repository.CartItemRepository;
 import com.fakeapi.FakeStore.cart.repository.CartRepository;
+import com.fakeapi.FakeStore.cart.service.CartService;
+import com.fakeapi.FakeStore.common.dto.PageRequestDTO;
+import com.fakeapi.FakeStore.common.dto.PageResponseDTO;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service @Log4j2
+@Service
+@Slf4j
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
@@ -68,9 +69,7 @@ public class CartServiceImpl implements CartService {
         cart.setUserId(cartDTO.getUserId());
         List<CartItem> cartItemList = new ArrayList<>();
 
-        for(CartItemDTO cartItemDTO : cartDTO.getProducts()){
-            log.info(cartItemDTO.getProductId());
-            log.info(cartItemDTO.getQuantity());
+        for (CartItemDTO cartItemDTO : cartDTO.getProducts()) {
 //            CartItem cartItem = modelMapper.map(cartItemDTO, CartItem.class); //modelMapper 사용시, 사용 인스턴스가 detached 될 수 있음
             CartItem cartItem = new CartItem();
             cartItem.setProductId(cartItemDTO.getProductId());
@@ -91,14 +90,14 @@ public class CartServiceImpl implements CartService {
     public CartDTO update(Long id, CartDTO cartDTO) {
         Optional<Cart> optionalCart = cartRepository.findById(id);
 
-        if(optionalCart.isPresent()){
+        if (optionalCart.isPresent()) {
 //            Cart cart = modelMapper.map(cartDTO,Cart.class);
             Cart cart = optionalCart.get();
             cart.setUserId(cartDTO.getUserId());
             cart.setDate(cartDTO.getDate());
 
             List<CartItem> cartItemList = new ArrayList<>();
-            for(CartItemDTO cartItemDTO:cartDTO.getProducts()){
+            for (CartItemDTO cartItemDTO : cartDTO.getProducts()) {
 //                CartItem cartItem = modelMapper.map(cartItemDTO,CartItem.class);
 
                 CartItem cartItem = new CartItem();
@@ -108,16 +107,16 @@ public class CartServiceImpl implements CartService {
                 cartItemList.add(cartItem);
             }
             List<CartItem> cartItems = cartItemRepository.findAllByCartId(cartDTO.getId());
-            for(CartItem c:cartItems)
+            for (CartItem c : cartItems)
                 cartItemRepository.delete(c);
             cart.setProducts(cartItemList);
 
             cartRepository.save(cart);
 
-            CartDTO updatedCartDTO = modelMapper.map(cart,CartDTO.class);
+            CartDTO updatedCartDTO = modelMapper.map(cart, CartDTO.class);
             updatedCartDTO.setProducts(cartDTO.getProducts());
             return updatedCartDTO;
-        }else {
+        } else {
             throw new RuntimeException("Cart not found");
         }
     }
@@ -130,7 +129,7 @@ public class CartServiceImpl implements CartService {
         return PageResponseDTO.<CartDTO>builder()
                 .pageRequestDTO(pageRequestDTO)
                 .dtoList(result.toList())
-                .total((int)result.getTotalElements())
+                .total((int) result.getTotalElements())
                 .build();
     }
 
@@ -139,8 +138,8 @@ public class CartServiceImpl implements CartService {
         Pageable pageableWithLimit = pageRequestDTO.getPageableWithLimit(limit);
         Page<Cart> productPage = cartRepository.findAll(pageableWithLimit);
         List<CartDTO> dtoList = new ArrayList<>();
-        for(Cart c:productPage.getContent()){
-            CartDTO cartDTO = modelMapper.map(c,CartDTO.class);
+        for (Cart c : productPage.getContent()) {
+            CartDTO cartDTO = modelMapper.map(c, CartDTO.class);
             dtoList.add(cartDTO);
         }
 
@@ -149,7 +148,7 @@ public class CartServiceImpl implements CartService {
         return PageResponseDTO.<CartDTO>builder()
                 .pageRequestDTO(pageRequestDTO)
                 .dtoList(result.toList())
-                .total((int)result.getTotalElements())
+                .total((int) result.getTotalElements())
                 .build();
     }
 
@@ -158,11 +157,11 @@ public class CartServiceImpl implements CartService {
         Optional<Cart> optionalCart = cartRepository.findById(id);
 
 
-        if(!optionalCart.isPresent()){
+        if (!optionalCart.isPresent()) {
             throw new RuntimeException("Cart not found");
         }
 
-        for(CartItem cartItem: optionalCart.get().getProducts()){
+        for (CartItem cartItem : optionalCart.get().getProducts()) {
             cartItemRepository.deleteById(cartItem.getId());
         }
 
@@ -175,14 +174,14 @@ public class CartServiceImpl implements CartService {
         Page<Cart> cart = cartRepository.findAllByDateBetween(startDate, endDate, pageable);
 
         List<CartDTO> cartDTOList = new ArrayList<>();
-        for(Cart c:cart.getContent()) {
+        for (Cart c : cart.getContent()) {
             CartDTO cartDTO = modelMapper.map(c, CartDTO.class);
             cartDTOList.add(cartDTO);
         }
         return PageResponseDTO.<CartDTO>builder()
                 .pageRequestDTO(pageRequestDTO)
                 .dtoList(cartDTOList)
-                .total((int)cart.getTotalElements())
+                .total((int) cart.getTotalElements())
                 .build();
     }
 
@@ -190,7 +189,7 @@ public class CartServiceImpl implements CartService {
     public List<CartDTO> readUserCart(Long id) {
         List<Cart> cartList = cartRepository.findAllByUserId(id);
         List<CartDTO> updatedCartDTO = new ArrayList<>();
-        for(Cart cart:cartList) {
+        for (Cart cart : cartList) {
             CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
             List<CartItemDTO> cartItemDTOList = new ArrayList<>();
             for (CartItem cartItem : cart.getProducts()) {

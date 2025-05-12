@@ -1,4 +1,4 @@
-package com.fakeapi.FakeStore.service;
+package com.fakeapi.FakeStore.member.service.impl;
 
 import com.fakeapi.FakeStore.common.security.exception.EmailAlreadyExistsException;
 import com.fakeapi.FakeStore.member.domain.Member;
@@ -8,13 +8,13 @@ import com.fakeapi.FakeStore.member.repository.MemberRepository;
 import com.fakeapi.FakeStore.member.repository.RoleRepository;
 import com.fakeapi.FakeStore.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Log4j2
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {

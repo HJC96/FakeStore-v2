@@ -4,18 +4,19 @@ import com.fakeapi.FakeStore.product.domain.Category;
 import com.fakeapi.FakeStore.product.repository.CategoryRepository;
 import com.fakeapi.FakeStore.product.service.CategoryService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Log4j2
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+
     @Override
     public List<Category> list() {
         return categoryRepository.findAll();
