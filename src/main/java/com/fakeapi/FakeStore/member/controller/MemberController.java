@@ -1,6 +1,7 @@
 package com.fakeapi.FakeStore.member.controller;
 
 import com.fakeapi.FakeStore.common.dto.RefreshTokenDTO;
+import com.fakeapi.FakeStore.common.security.jwt.service.RedisBlacklistService;
 import com.fakeapi.FakeStore.common.token.domain.RefreshToken;
 import com.fakeapi.FakeStore.common.token.service.RefreshTokenService;
 import com.fakeapi.FakeStore.common.util.IfLogin;
@@ -15,6 +16,7 @@ import com.fakeapi.FakeStore.member.dto.response.MemberLoginResponseDTO;
 import com.fakeapi.FakeStore.member.dto.response.MemberSignUpResponseDTO;
 import com.fakeapi.FakeStore.member.service.MemberService;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +40,7 @@ public class MemberController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenService refreshTokenService;
+    private final RedisBlacklistService redisBlacklistService;
 
     @PostMapping("/signup")
     public ResponseEntity signup(@RequestBody @Valid MemberSignUpDTO memberSignUpDTO, BindingResult bindingResult) {
@@ -95,11 +98,31 @@ public class MemberController {
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity logout(@RequestBody RefreshTokenDTO refreshTokenDTO) {
+    public ResponseEntity logout(@RequestBody RefreshTokenDTO refreshTokenDTO,
+                                 HttpServletRequest request) {
         log.debug("Attempting to logout");
-        refreshTokenService.deleteRefreshToken(refreshTokenDTO.getRefreshToken());
-        log.debug("Logout successful");
 
+        // 1. RefreshToken 삭제 (기존 로직)
+        refreshTokenService.deleteRefreshToken(refreshTokenDTO.getRefreshToken());
+
+        // 2. AccessToken 블랙리스트 등록
+        String authorization = request.getHeader("Authorization");
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            String accessToken = authorization.substring(7);
+
+            // JWT에서 만료 시간 추출
+            Claims claims = jwtTokenizer.parseAccessToken(accessToken);
+            long now = System.currentTimeMillis();
+            long exp = claims.getExpiration().getTime();
+            long ttl = (exp - now) / 1000;  // 초 단위 TTL
+
+            if (ttl > 0) {
+                redisBlacklistService.blacklistToken(accessToken, ttl);
+                log.debug("Access token blacklisted with TTL = {}s", ttl);
+            }
+        } else {
+            log.warn("Authorization header not found or invalid during logout");
+        }
 
         return new ResponseEntity(HttpStatus.OK);
     }

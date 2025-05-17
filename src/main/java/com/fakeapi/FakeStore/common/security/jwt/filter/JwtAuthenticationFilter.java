@@ -1,6 +1,7 @@
 package com.fakeapi.FakeStore.common.security.jwt.filter;
 
 import com.fakeapi.FakeStore.common.security.exception.JwtExceptionCode;
+import com.fakeapi.FakeStore.common.security.jwt.service.RedisBlacklistService;
 import com.fakeapi.FakeStore.common.security.jwt.token.JwtAuthenticationToken;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -25,6 +26,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final RedisBlacklistService redisBlacklistService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -32,34 +34,50 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = "";
         try {
             token = getToken(request);
+
             if (!StringUtils.hasText(token)) {
                 // 토큰이 없으면 인증을 시도하지 않고 다음 필터로 넘김
                 filterChain.doFilter(request, response);
                 return;
             }
-            // 토큰이 있으면 인증 수행
-            getAuthentication(token);
+
+            // ✅ 블랙리스트 체크
+            if (redisBlacklistService.isTokenBlacklisted(token)) {
+                request.setAttribute("exception", JwtExceptionCode.BLACKLISTED_TOKEN.getCode());
+                log.error("Blacklisted Token // token : {}", token);
+                log.error("Set Request Exception Code : {}", request.getAttribute("exception"));
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            // 인증 수행
+            setAuthentication(token);
             filterChain.doFilter(request, response);
+
         } catch (NullPointerException | IllegalStateException e) {
             request.setAttribute("exception", JwtExceptionCode.NOT_FOUND_TOKEN.getCode());
             log.error("Not found Token // token : {}", token);
             log.error("Set Request Exception Code : {}", request.getAttribute("exception"));
             throw new BadCredentialsException("throw new not found token exception");
+
         } catch (SecurityException | MalformedJwtException e) {
             request.setAttribute("exception", JwtExceptionCode.INVALID_TOKEN.getCode());
             log.error("Invalid Token // token : {}", token);
             log.error("Set Request Exception Code : {}", request.getAttribute("exception"));
             throw new BadCredentialsException("throw new invalid token exception");
+
         } catch (ExpiredJwtException e) {
             request.setAttribute("exception", JwtExceptionCode.EXPIRED_TOKEN.getCode());
             log.error("EXPIRED Token // token : {}", token);
             log.error("Set Request Exception Code : {}", request.getAttribute("exception"));
             throw new BadCredentialsException("throw new expired token exception");
+
         } catch (UnsupportedJwtException e) {
             request.setAttribute("exception", JwtExceptionCode.UNSUPPORTED_TOKEN.getCode());
             log.error("Unsupported Token // token : {}", token);
             log.error("Set Request Exception Code : {}", request.getAttribute("exception"));
             throw new BadCredentialsException("throw new unsupported token exception");
+
         } catch (Exception e) {
             log.error("====================================================");
             log.error("JwtFilter - doFilterInternal() 오류 발생");
@@ -73,12 +91,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void getAuthentication(String token) {
+    private void setAuthentication(String token) {
         JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(token);
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
-        // 이 객체에는 JWT안의 내용을 가지고 로그인 id,role
-
-        SecurityContextHolder.getContext().setAuthentication(authenticate); // 현재 요청에서 언제든지 인증정보를 꺼낼 수 있도록 해준다.
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
     }
 
     private String getToken(HttpServletRequest request) {
@@ -89,7 +105,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (!authorization.toLowerCase().startsWith("bearer ")) {
             throw new UnsupportedJwtException("Authorization header must start with Bearer");
         }
-        String token = authorization.substring(7).trim(); // "Bearer " 다음부터 잘라냄
+        String token = authorization.substring(7).trim();
         if (!StringUtils.hasText(token)) {
             throw new MalformedJwtException("JWT token is empty after 'Bearer'");
         }

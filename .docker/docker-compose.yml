@@ -1,18 +1,29 @@
-version: '3.8'
+version: '3.8'  # Docker Compose 파일 버전 (현재는 명시하지 않아도 무방함)
+
 services:
   mariadb:
-    image: mariadb:10.6
-    container_name: mariadb
-    restart: always
+    image: mariadb:10.6  # 사용할 MariaDB 이미지 버전
+    container_name: mariadb  # 생성될 컨테이너 이름
+    restart: always  # 컨테이너가 예기치 않게 종료될 경우 자동 재시작
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: fakestore
-      MYSQL_USER: storeuser
-      MYSQL_PASSWORD: storepass
+      MYSQL_ROOT_PASSWORD: rootpass  # MariaDB root 계정 비밀번호
+      MYSQL_DATABASE: fakestore      # 생성할 기본 데이터베이스 이름
+      MYSQL_USER: storeuser          # 사용자 계정 이름
+      MYSQL_PASSWORD: storepass      # 사용자 계정 비밀번호
     ports:
-      - "3306:3306"
+      - "3306:3306"  # 호스트:컨테이너 포트 매핑 (DB 접근용)
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql  # MariaDB의 데이터를 호스트 볼륨에 영구 저장
+
+  redis:
+    image: redis:7  # 사용할 Redis 이미지 버전
+    container_name: redis  # 생성될 컨테이너 이름
+    ports:
+      - "6379:6379"  # 호스트:컨테이너 포트 매핑 (Redis 접근용)
+    volumes:
+      - redis_data:/data  # Redis의 데이터를 호스트 볼륨에 영구 저장
+    restart: always  # 컨테이너가 예기치 않게 종료될 경우 자동 재시작
 
 volumes:
-  mariadb_data:
+  mariadb_data:  # MariaDB 데이터가 저장될 Docker 관리 볼륨
+  redis_data:    # Redis 데이터가 저장될 Docker 관리 볼륨
