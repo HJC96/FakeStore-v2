@@ -14,6 +14,7 @@ import com.fakeapi.FakeStore.member.dto.request.MemberLoginDTO;
 import com.fakeapi.FakeStore.member.dto.request.MemberSignUpDTO;
 import com.fakeapi.FakeStore.member.dto.response.MemberLoginResponseDTO;
 import com.fakeapi.FakeStore.member.dto.response.MemberSignUpResponseDTO;
+import com.fakeapi.FakeStore.member.service.LoginAttemptService;
 import com.fakeapi.FakeStore.member.service.MemberService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,6 +43,7 @@ public class MemberController {
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenService refreshTokenService;
     private final RedisBlacklistService redisBlacklistService;
+    private final LoginAttemptService loginAttemptService;
 
     @PostMapping("/signup")
     public ResponseEntity signup(@RequestBody @Valid MemberSignUpDTO memberSignUpDTO, BindingResult bindingResult) {
@@ -61,15 +64,28 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid MemberLoginDTO memberLoginDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        if (bindingResult.hasErrors()) return new ResponseEntity(HttpStatus.BAD_REQUEST);
+
+        String email = memberLoginDTO.getEmail();
+
+        if (loginAttemptService.isBlocked(email)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("로그인 시도 제한됨. 잠시 후 다시 시도하세요.");
         }
 
-        // email이 없을 경우 Exception이 발생한다. Global Exception에 대한 처리가 필요하다.
-        Member member = memberService.findByEmail(memberLoginDTO.getEmail()).get();
-        if (!passwordEncoder.matches(memberLoginDTO.getPassword(), member.getPassword())) {
+        Optional<Member> optional = memberService.findByEmail(email);
+        if (optional.isEmpty()) {
+            loginAttemptService.recordFailedAttempt(email);
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
+
+        Member member = optional.get();
+        if (!passwordEncoder.matches(memberLoginDTO.getPassword(), member.getPassword())) {
+            loginAttemptService.recordFailedAttempt(email);
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+
+        // 로그인 성공 시 시도 기록 삭제
+        loginAttemptService.clearAttempts(email);
 
         // List<Role> ===> List<String>
         List<String> roles = member.getMemberRoles().stream().map(MemberRole::getRole).map(Role::getName).toList();
@@ -84,10 +100,7 @@ public class MemberController {
         refreshTokenEntity.setMemberId(member.getId());
         refreshTokenService.addRefreshToken(refreshTokenEntity);
 
-        MemberLoginResponseDTO loginResponse = MemberLoginResponseDTO.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        MemberLoginResponseDTO loginResponse = MemberLoginResponseDTO.builder().accessToken(accessToken).refreshToken(refreshToken).build();
         return new ResponseEntity(loginResponse, HttpStatus.OK);
     }
 
@@ -98,8 +111,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity logout(@RequestBody RefreshTokenDTO refreshTokenDTO,
-                                 HttpServletRequest request) {
+    public ResponseEntity logout(@RequestBody RefreshTokenDTO refreshTokenDTO, HttpServletRequest request) {
         log.debug("Attempting to logout");
 
         // 1. RefreshToken 삭제 (기존 로직)
@@ -146,10 +158,7 @@ public class MemberController {
 
         String accessToken = jwtTokenizer.createAccessToken(memberId, email, member.getName(), roles);
 
-        MemberLoginResponseDTO memberLoginResponseDTO = MemberLoginResponseDTO.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshTokenDTO.getRefreshToken())
-                .build();
+        MemberLoginResponseDTO memberLoginResponseDTO = MemberLoginResponseDTO.builder().accessToken(accessToken).refreshToken(refreshTokenDTO.getRefreshToken()).build();
         return new ResponseEntity(memberLoginResponseDTO, HttpStatus.OK);
     }
 }

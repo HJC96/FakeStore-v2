@@ -27,6 +27,8 @@
 
 [Client] → 로그아웃 요청 → Redis에 토큰 저장 (TTL=만료까지 남은 시간)
 ~~~
+- Redis를 활용한 로그인 시도 제한 기능 추가: 특정 이메일 기준으로 로그인 실패 횟수를 기록하고, 5회 이상 실패 시 15분간 로그인 차단
+
 ### ✅ 리팩토링
 - 사용하지 않는 코드 및 주석 제거
 - Querydsl 사용 방식을 `QuerydslRepositorySupport` → `JPAQueryFactory` 주입 방식으로 전환
