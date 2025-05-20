@@ -2,23 +2,23 @@
 name: on-premise-cicd
 
 # 수동 실행 트리거 정의
-#on:
-#  workflow_dispatch:  # GitHub UI에서 수동 실행 가능하도록 설정
-#    inputs:
-#      tags:
-#        description: 'Set Tags Name'  # 태그 설명
-#        required: true  # 필수 입력값
-#        default: master  # 기본값으로 master 사용
 on:
-  push:
-    branches:
-      - main
-      - master
-  workflow_dispatch:
+  workflow_dispatch:  # GitHub UI에서 수동 실행 가능하도록 설정
     inputs:
       tags:
-        description: 'Set Tags Name'
-        required: false
+        description: 'Set Tags Name'  # 태그 설명
+        required: true  # 필수 입력값
+        default: master  # 기본값으로 master 사용
+#on:
+#  push:
+#    branches:
+#      - main
+#      - master
+#  workflow_dispatch:
+#    inputs:
+#      tags:
+#        description: 'Set Tags Name'
+#        required: false
 
 
 jobs:
