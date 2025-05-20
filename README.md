@@ -1,4 +1,4 @@
-# FakeStore v2
+# FakeStore-v2
 
 이 프로젝트는 [FakeStore](https://github.com/HJC96/FakeStore)를 리팩토링한 백엔드 프로젝트입니다.
 
@@ -32,7 +32,6 @@
 ### ✅ 리팩토링
 - 사용하지 않는 코드 및 주석 제거
 - Querydsl 사용 방식을 `QuerydslRepositorySupport` → `JPAQueryFactory` 주입 방식으로 전환
-
 
 ---
 ## ⚙️ 기술 스택
