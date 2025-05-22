@@ -38,7 +38,7 @@ jobs:
           distribution: 'microsoft'  # 또는 'temurin' 사용 가능
 
       - name: Build with Maven  # Maven으로 프로젝트 빌드
-        run: mvn clean package -DskipTests
+        run: mvn clean package -Dmaven.test.skip=true
 
       - name: Add version to JAR  # 결과 JAR에 버전명 부여
         run: |
