@@ -8,7 +8,7 @@ on:
       tags:
         description: 'Set Tags Name'  # 태그 설명
         required: true  # 필수 입력값
-        default: main  # 기본값으로 master 사용
+        default: master  # 기본값으로 master 사용
 #on:
 #  push:
 #    branches:
