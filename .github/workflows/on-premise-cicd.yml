@@ -48,8 +48,8 @@ jobs:
       - name: Setup JDK 21  # 자바 개발 환경 설정
         uses: actions/setup-java@v4  # 공식 자바 설정 액션
         with:
-          java-version: ms21  # 사용할 자바 버전
-          distribution: 'temurin'  # Temurin 배포판 사용
+          java-version: 21  # 사용할 자바 버전
+          distribution: 'microsoft'  # Temurin 배포판 사용
 
       - name: Build with Gradlew  # Gradle로 프로젝트 빌드 및 테스트
         run: ./gradlew clean test bootJar  # 테스트 포함 빌드 수행
