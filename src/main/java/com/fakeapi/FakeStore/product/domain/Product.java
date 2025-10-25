@@ -3,6 +3,7 @@ package com.fakeapi.FakeStore.product.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.util.StringUtils;
 
 @Entity
 @AllArgsConstructor
@@ -25,22 +26,43 @@ public class Product {
     @Column(name = "DESCRIPTION", length = 2000)
     private String description;
 
-//    @ManyToOne(cascade = CascadeType.ALL) 삭제시에도 영향을 미침
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "CATEGORY_ID", nullable=false)
     private Category category;
-//    @ManyToMany(cascade = CascadeType.ALL)
-//    @JoinTable(
-//            name = "PRODUCT_CATEGORY",
-//            joinColumns = @JoinColumn(name = "PRODUCT_ID"),
-//            inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID"))
-//    private List<Category> categories = new ArrayList<>();
 
     @Column(name = "IMAGE")
     private String image;
 
     @Embedded
-    @Column(name = "RATING", nullable = true) // Rating이 없는 Product가 들어올수 있다.
+    @Column(name = "RATING", nullable = true)
     private Rating rating;
 
+    public void validate() {
+        if (!StringUtils.hasText(title)) {
+            throw new IllegalArgumentException("Product title cannot be blank.");
+        }
+        if (title.length() > 255) {
+            throw new IllegalArgumentException("Product title cannot be longer than 255 characters.");
+        }
+        if (price == null) {
+            throw new IllegalArgumentException("Product price cannot be null.");
+        }
+        if (price < 0) {
+            throw new IllegalArgumentException("Product price must be zero or positive.");
+        }
+        if (!StringUtils.hasText(description)) {
+            throw new IllegalArgumentException("Product description cannot be blank.");
+        }
+        if (!StringUtils.hasText(image)) {
+            throw new IllegalArgumentException("Product image cannot be blank.");
+        }
+        if (category == null) {
+            throw new IllegalArgumentException("Product category cannot be null.");
+        }
+        category.validate();
+
+        if (rating != null) {
+            rating.validate();
+        }
+    }
 }
