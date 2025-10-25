@@ -62,8 +62,9 @@ public class CartController {
     }
 
     @PostMapping
-    public Cart registerCart(@RequestBody @Valid CartDTO cartDTO) {
-        return cartService.register(cartDTO);
+    public ResponseEntity<Cart> registerCart(@RequestBody @Valid CartDTO cartDTO) {
+        Cart registeredCart = cartService.register(cartDTO);
+        return new ResponseEntity<>(registeredCart, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}") // PUT은 일반적으로 리소스 전체를 업데이트 하는데 사용

@@ -77,13 +77,8 @@ public class ProductController {
     }
 
     @GetMapping("/category/{id}")
-    public Optional<Category> readId_category(@PathVariable("id") Long id) {
+    public Optional<Category> readCategoryId(@PathVariable("id") Long id) {
         return categoryService.read(id);
     }
 
-
-    @GetMapping("/category/{categoryName}")
-    public List<ProductDTO> readName_category(@PathVariable("categoryName") String categoryName) {
-        return productService.listByCategoryName(categoryName);
-    }
 }
