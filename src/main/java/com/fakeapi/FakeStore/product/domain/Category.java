@@ -1,12 +1,16 @@
 package com.fakeapi.FakeStore.product.domain;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
+import java.util.Objects;
 
 import jakarta.persistence.*;
 
 @Entity
-@Getter @Setter
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CATEGORY_ID")
@@ -15,15 +19,13 @@ public class Category {
     @Column(name = "CATEGORYNAME")
     private String name;
 
-    public void validate() {
-        if (!StringUtils.hasText(name)) {
+    public Category(String name) {
+        this.name = Objects.requireNonNull(name, "Category name cannot be null.");
+        if (name.isBlank()) {
             throw new IllegalArgumentException("Category name cannot be blank.");
         }
         if (name.length() > 255) {
             throw new IllegalArgumentException("Category name cannot be longer than 255 characters.");
         }
     }
-
-//    @ManyToMany(mappedBy = "categories", cascade = CascadeType.ALL)
-//    List<Product> products = new ArrayList<Product>();
 }

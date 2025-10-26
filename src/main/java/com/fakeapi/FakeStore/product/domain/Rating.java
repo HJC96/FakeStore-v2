@@ -1,25 +1,24 @@
 package com.fakeapi.FakeStore.product.domain;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import jakarta.persistence.Embeddable;
+import java.util.Objects;
 
 @Embeddable
-@Getter @Setter
-@AllArgsConstructor @NoArgsConstructor
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Rating {
     private Double rate;
     private Integer count;
 
-    public void validate() {
-        if (rate == null) {
-            throw new IllegalArgumentException("Rating rate cannot be null.");
-        }
+    public Rating(Double rate, Integer count) {
+        this.rate = Objects.requireNonNull(rate, "Rating rate cannot be null.");
+        this.count = Objects.requireNonNull(count, "Rating count cannot be null.");
         if (rate < 0) {
             throw new IllegalArgumentException("Rating rate must be zero or positive.");
-        }
-        if (count == null) {
-            throw new IllegalArgumentException("Rating count cannot be null.");
         }
         if (count < 0) {
             throw new IllegalArgumentException("Rating count must be zero or positive.");

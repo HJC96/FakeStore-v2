@@ -1,14 +1,16 @@
 package com.fakeapi.FakeStore.cart.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 
 @Entity
 @Table(name = "cart_item")
-@Setter
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CartItem {
 
     @Id
@@ -25,5 +27,16 @@ public class CartItem {
 
     @Column(name = "quantity")
     private int quantity;
+
+    public CartItem(Cart cart, Long productId, int quantity) {
+        Objects.requireNonNull(cart, "Cart cannot be null.");
+        Objects.requireNonNull(productId, "Product ID cannot be null.");
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be positive.");
+        }
+        this.cart = cart;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
 }
 

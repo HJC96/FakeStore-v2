@@ -28,17 +28,19 @@ public class MemberServiceImpl implements MemberService {
         if (memberRepository.findByEmail(email).isPresent()) {
             throw new EmailAlreadyExistsException("Email already in use: " + email);
         }
-        Member member = new Member();
-        log.info(memberSignUpDTO.getName());
-        log.info(memberSignUpDTO.getEmail());
-        member.setName(memberSignUpDTO.getName());
-        member.setEmail(memberSignUpDTO.getEmail());
-        member.setPassword(passwordEncoder.encode(memberSignUpDTO.getPassword()));
+
+        Member member = new Member(
+                memberSignUpDTO.getEmail(),
+                null,
+                passwordEncoder.encode(memberSignUpDTO.getPassword()),
+                null,
+                memberSignUpDTO.getName(),
+                null
+        );
 
         Optional<Role> userRole = roleRepository.findByName("ROLE_USER");
-        member.addRole(userRole.get());
-        Member saveMember = memberRepository.save(member);
-        return saveMember;
+        userRole.ifPresent(member::addRole);
+        return memberRepository.save(member);
     }
 
     @Override
@@ -51,3 +53,4 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findById(memberId);
     }
 }
+

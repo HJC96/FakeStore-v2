@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor @Setter
 public class MemberSignUpDTO {

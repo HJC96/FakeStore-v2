@@ -100,7 +100,7 @@ public class MemberController {
         refreshTokenEntity.setMemberId(member.getId());
         refreshTokenService.addRefreshToken(refreshTokenEntity);
 
-        MemberLoginResponseDTO loginResponse = MemberLoginResponseDTO.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+        MemberLoginResponseDTO loginResponse = new MemberLoginResponseDTO(accessToken, refreshToken);
         return new ResponseEntity(loginResponse, HttpStatus.OK);
     }
 
@@ -158,7 +158,7 @@ public class MemberController {
 
         String accessToken = jwtTokenizer.createAccessToken(memberId, email, member.getName(), roles);
 
-        MemberLoginResponseDTO memberLoginResponseDTO = MemberLoginResponseDTO.builder().accessToken(accessToken).refreshToken(refreshTokenDTO.getRefreshToken()).build();
+        MemberLoginResponseDTO memberLoginResponseDTO = new MemberLoginResponseDTO(accessToken, refreshTokenDTO.getRefreshToken());
         return new ResponseEntity(memberLoginResponseDTO, HttpStatus.OK);
     }
 }

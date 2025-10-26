@@ -1,19 +1,27 @@
 package com.fakeapi.FakeStore.member.domain;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.Objects;
 
 @Embeddable
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GeoLocation {
     private String lat;
     private String longitude;
 
-    @Column(name = "longitude")  // "long"은 예약어라 에러남
-    public String getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
+    public GeoLocation(String lat, String longitude) {
+        this.lat = Objects.requireNonNull(lat, "Latitude cannot be null.");
+        if (lat.isBlank()) {
+            throw new IllegalArgumentException("Latitude cannot be blank.");
+        }
+        this.longitude = Objects.requireNonNull(longitude, "Longitude cannot be null.");
+        if (longitude.isBlank()) {
+            throw new IllegalArgumentException("Longitude cannot be blank.");
+        }
     }
 }

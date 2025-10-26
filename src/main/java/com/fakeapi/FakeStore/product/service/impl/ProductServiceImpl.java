@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -31,19 +32,19 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product register(ProductDTO productDTO) {
-        Product product = modelMapper.map(productDTO, Product.class);
-        Optional<Category> optionalCategory = categoryRepository.findByName(productDTO.getCategory());
-        if (optionalCategory.isEmpty()) {
-            Category category = new Category();
-            category.setName(productDTO.getCategory());
-            product.setCategory(category);
-        } else {
-            product.setCategory(optionalCategory.get());
-        }
+        Category category = categoryRepository.findByName(productDTO.getCategory())
+                .orElseGet(() -> categoryRepository.save(new Category(productDTO.getCategory())));
 
-        product.setRating(productDTO.getRating());
-        productRepository.save(product);
-        return product;
+        Product product = new Product(
+                productDTO.getTitle(),
+                productDTO.getPrice(),
+                productDTO.getDescription(),
+                category,
+                productDTO.getImage(),
+                productDTO.getRating()
+        );
+
+        return productRepository.save(product);
     }
 
     @Override
@@ -59,14 +60,13 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> listByCategoryName(String name) {
         List<Product> product = productRepository.findAllByCategoryName(name);
 
-        List<ProductDTO> productDTOList = new ArrayList<>();
-        for (Product p : product) {
-            System.out.println(p.getCategory());
-            ProductDTO productDTO = modelMapper.map(p, ProductDTO.class);
-            productDTO.setCategory(p.getCategory().getName());
-            productDTOList.add(productDTO);
-        }
-        return productDTOList;
+        return product.stream()
+                .map(p -> {
+                    ProductDTO productDTO = modelMapper.map(p, ProductDTO.class);
+                    productDTO.setCategory(p.getCategory().getName());
+                    return productDTO;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -84,60 +84,44 @@ public class ProductServiceImpl implements ProductService {
     public PageResponseDTO<ProductDTO> listWithLimitProduct(PageRequestDTO pageRequestDTO, int limit) {
         Pageable pageableWithLimit = pageRequestDTO.getPageableWithLimit(limit);
         Page<Product> productPage = productRepository.findAll(pageableWithLimit);
-        List<ProductDTO> dtoList = new ArrayList<>();
-        for (Product p : productPage.getContent()) {
-            ProductDTO productDTO = modelMapper.map(p, ProductDTO.class);
-            dtoList.add(productDTO);
-        }
-
-        Page<ProductDTO> result = new PageImpl<>(dtoList, pageableWithLimit, productPage.getTotalElements());
+        List<ProductDTO> dtoList = productPage.getContent().stream()
+                .map(p -> modelMapper.map(p, ProductDTO.class))
+                .collect(Collectors.toList());
 
         return PageResponseDTO.<ProductDTO>builder()
                 .pageRequestDTO(pageRequestDTO)
-                .dtoList(result.toList())
-                .total((int) result.getTotalElements())
+                .dtoList(dtoList)
+                .total((int) productPage.getTotalElements())
                 .build();
     }
 
     @Override
     public ProductDTO update(Long id, ProductDTO productDTO) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        Optional<Category> optionalCategory = categoryRepository.findByName(productDTO.getCategory());
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        if (optionalProduct.isPresent()) {
-            // modelMapper가 예상대로 동작하지 않음. 수동 매핑
-            // modelMapper.map(productDTO, Product.class);
-            Product product = optionalProduct.get();
-            product.setTitle(productDTO.getTitle());
-            product.setPrice(productDTO.getPrice());
-            product.setDescription(productDTO.getDescription());
-            product.setImage(productDTO.getImage());
-            if (optionalCategory.isPresent())
-                product.setCategory(optionalCategory.get());
-            else {
-                Category category = new Category();
-                category.setName(productDTO.getCategory());
-                categoryRepository.save(category);
-                product.setCategory(category);
-            }
-            product.setRating(productDTO.getRating());
-            productRepository.save(product);
+        Category category = categoryRepository.findByName(productDTO.getCategory())
+                .orElseGet(() -> categoryRepository.save(new Category(productDTO.getCategory())));
 
-            ProductDTO updatedProductDTO = modelMapper.map(product, ProductDTO.class);
-            updatedProductDTO.setCategory(optionalCategory.get().getName());
-            return updatedProductDTO;
-        } else {
-            throw new RuntimeException("Product not found");
-        }
+        Product updatedProduct = new Product(
+                product.getId(),
+                productDTO.getTitle(),
+                productDTO.getPrice(),
+                productDTO.getDescription(),
+                category,
+                productDTO.getImage(),
+                productDTO.getRating()
+        );
+
+        productRepository.save(updatedProduct);
+
+        ProductDTO updatedProductDTO = modelMapper.map(updatedProduct, ProductDTO.class);
+        updatedProductDTO.setCategory(category.getName());
+        return updatedProductDTO;
     }
 
     @Override
     public void delete(Long id) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-
-        if (!optionalProduct.isPresent()) {
-            throw new RuntimeException("Product not found");
-        }
         productRepository.deleteById(id);
     }
 }

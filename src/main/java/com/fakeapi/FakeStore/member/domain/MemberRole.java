@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "member_role")
 @Getter
@@ -23,7 +25,7 @@ public class MemberRole {
     private Role role;
 
     public MemberRole(Member member, Role role) {
-        this.member = member;
-        this.role = role;
+        this.member = Objects.requireNonNull(member, "Member cannot be null.");
+        this.role = Objects.requireNonNull(role, "Role cannot be null.");
     }
 }

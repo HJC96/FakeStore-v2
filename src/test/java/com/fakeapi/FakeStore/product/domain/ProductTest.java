@@ -1,198 +1,157 @@
 package com.fakeapi.FakeStore.product.domain;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ProductTest {
+class ProductTest {
 
-    @Test
-    void 상품_제목이_비어있으면_예외가_발생한다() {
-        Product product = new Product();
-        product.setTitle("");
-        product.setPrice(10.0);
-        product.setDescription("description");
-        product.setImage("image.jpg");
-        Category category = new Category();
-        category.setName("category");
-        product.setCategory(category);
+    private Category testCategory;
+    private Rating testRating;
 
-        assertThatThrownBy(product::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Product title cannot be blank.");
+    @BeforeEach
+    void setUp() {
+        testCategory = new Category("Electronics");
+        testRating = new Rating(4.0, 50);
     }
 
     @Test
-    void 상품_가격이_null이면_예외가_발생한다() {
-        Product product = new Product();
-        product.setTitle("title");
-        product.setPrice(null);
-        product.setDescription("description");
-        product.setImage("image.jpg");
-        Category category = new Category();
-        category.setName("category");
-        product.setCategory(category);
+    void Product_생성_성공_ID_없음() {
+        Product product = new Product(
+                "Laptop",
+                1200.0,
+                "Powerful laptop for work and gaming.",
+                testCategory,
+                "http://example.com/laptop.jpg",
+                testRating
+        );
 
-        assertThatThrownBy(product::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Product price cannot be null.");
+        assertNotNull(product);
+        assertNull(product.getId());
+        assertEquals("Laptop", product.getTitle());
+        assertEquals(1200.0, product.getPrice());
+        assertEquals("Powerful laptop for work and gaming.", product.getDescription());
+        assertEquals(testCategory, product.getCategory());
+        assertEquals("http://example.com/laptop.jpg", product.getImage());
+        assertEquals(testRating, product.getRating());
     }
 
     @Test
-    void 상품_가격이_음수이면_예외가_발생한다() {
-        Product product = new Product();
-        product.setTitle("title");
-        product.setPrice(-10.0);
-        product.setDescription("description");
-        product.setImage("image.jpg");
-        Category category = new Category();
-        category.setName("category");
-        product.setCategory(category);
+    void Product_생성_성공_ID_포함() {
+        Product product = new Product(
+                1L,
+                "Smartphone",
+                800.0,
+                "Latest model smartphone with advanced features.",
+                testCategory,
+                "http://example.com/smartphone.jpg",
+                testRating
+        );
 
-        assertThatThrownBy(product::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Product price must be zero or positive.");
+        assertNotNull(product);
+        assertEquals(1L, product.getId());
+        assertEquals("Smartphone", product.getTitle());
+        assertEquals(800.0, product.getPrice());
+        assertEquals("Latest model smartphone with advanced features.", product.getDescription());
+        assertEquals(testCategory, product.getCategory());
+        assertEquals("http://example.com/smartphone.jpg", product.getImage());
+        assertEquals(testRating, product.getRating());
     }
 
     @Test
-    void 상품_설명이_비어있으면_예외가_발생한다() {
-        Product product = new Product();
-        product.setTitle("title");
-        product.setPrice(10.0);
-        product.setDescription("");
-        product.setImage("image.jpg");
-        Category category = new Category();
-        category.setName("category");
-        product.setCategory(category);
-
-        assertThatThrownBy(product::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Product description cannot be blank.");
+    void Title이_null일_경우_예외_발생() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+            new Product(null, 100.0, "desc", testCategory, "image.jpg", testRating);
+        });
+        assertEquals("Product title cannot be null.", exception.getMessage());
     }
 
     @Test
-    void 상품_이미지가_비어있으면_예외가_발생한다() {
-        Product product = new Product();
-        product.setTitle("title");
-        product.setPrice(10.0);
-        product.setDescription("description");
-        product.setImage("");
-        Category category = new Category();
-        category.setName("category");
-        product.setCategory(category);
-
-        assertThatThrownBy(product::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Product image cannot be blank.");
+    void Title이_빈_문자열일_경우_예외_발생() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Product("", 100.0, "desc", testCategory, "image.jpg", testRating);
+        });
+        assertEquals("Product title cannot be blank.", exception.getMessage());
     }
 
     @Test
-    void 상품_카테고리가_null이면_예외가_발생한다() {
-        Product product = new Product();
-        product.setTitle("title");
-        product.setPrice(10.0);
-        product.setDescription("description");
-        product.setImage("image.jpg");
-        product.setCategory(null);
-
-        assertThatThrownBy(product::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Product category cannot be null.");
+    void Title이_255자를_초과할_경우_예외_발생() {
+        String longTitle = "a".repeat(256);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Product(longTitle, 100.0, "desc", testCategory, "image.jpg", testRating);
+        });
+        assertEquals("Product title cannot be longer than 255 characters.", exception.getMessage());
     }
 
     @Test
-    void 상품_카테고리_이름이_비어있으면_예외가_발생한다() {
-        Product product = new Product();
-        product.setTitle("title");
-        product.setPrice(10.0);
-        product.setDescription("description");
-        product.setImage("image.jpg");
-        Category category = new Category();
-        category.setName("");
-        product.setCategory(category);
-
-        assertThatThrownBy(product::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Category name cannot be blank.");
+    void Price가_null일_경우_예외_발생() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+            new Product("Title", null, "desc", testCategory, "image.jpg", testRating);
+        });
+        assertEquals("Product price cannot be null.", exception.getMessage());
     }
 
     @Test
-    void 상품_평점_비율이_null이면_예외가_발생한다() {
-        Product product = new Product();
-        product.setTitle("title");
-        product.setPrice(10.0);
-        product.setDescription("description");
-        product.setImage("image.jpg");
-        Category category = new Category();
-        category.setName("category");
-        product.setCategory(category);
-        Rating rating = new Rating();
-        rating.setRate(null);
-        rating.setCount(10);
-        product.setRating(rating);
-
-        assertThatThrownBy(product::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Rating rate cannot be null.");
+    void Price가_음수일_경우_예외_발생() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Product("Title", -10.0, "desc", testCategory, "image.jpg", testRating);
+        });
+        assertEquals("Product price must be zero or positive.", exception.getMessage());
     }
 
     @Test
-    void 상품_평점_비율이_음수이면_예외가_발생한다() {
-        Product product = new Product();
-        product.setTitle("title");
-        product.setPrice(10.0);
-        product.setDescription("description");
-        product.setImage("image.jpg");
-        Category category = new Category();
-        category.setName("category");
-        product.setCategory(category);
-        Rating rating = new Rating();
-        rating.setRate(-1.0);
-        rating.setCount(10);
-        product.setRating(rating);
-
-        assertThatThrownBy(product::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Rating rate must be zero or positive.");
+    void Description이_null일_경우_예외_발생() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+            new Product("Title", 100.0, null, testCategory, "image.jpg", testRating);
+        });
+        assertEquals("Product description cannot be null.", exception.getMessage());
     }
 
     @Test
-    void 상품_평점_개수가_null이면_예외가_발생한다() {
-        Product product = new Product();
-        product.setTitle("title");
-        product.setPrice(10.0);
-        product.setDescription("description");
-        product.setImage("image.jpg");
-        Category category = new Category();
-        category.setName("category");
-        product.setCategory(category);
-        Rating rating = new Rating();
-        rating.setRate(4.5);
-        rating.setCount(null);
-        product.setRating(rating);
-
-        assertThatThrownBy(product::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Rating count cannot be null.");
+    void Description이_빈_문자열일_경우_예외_발생() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Product("Title", 100.0, "", testCategory, "image.jpg", testRating);
+        });
+        assertEquals("Product description cannot be blank.", exception.getMessage());
     }
 
     @Test
-    void 상품_평점_개수가_음수이면_예외가_발생한다() {
-        Product product = new Product();
-        product.setTitle("title");
-        product.setPrice(10.0);
-        product.setDescription("description");
-        product.setImage("image.jpg");
-        Category category = new Category();
-        category.setName("category");
-        product.setCategory(category);
-        Rating rating = new Rating();
-        rating.setRate(4.5);
-        rating.setCount(-10);
-        product.setRating(rating);
+    void Image가_null일_경우_예외_발생() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+            new Product("Title", 100.0, "desc", testCategory, null, testRating);
+        });
+        assertEquals("Product image cannot be null.", exception.getMessage());
+    }
 
-        assertThatThrownBy(product::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Rating count must be zero or positive.");
+    @Test
+    void Image가_빈_문자열일_경우_예외_발생() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Product("Title", 100.0, "desc", testCategory, "", testRating);
+        });
+        assertEquals("Product image cannot be blank.", exception.getMessage());
+    }
+
+    @Test
+    void Category가_null일_경우_예외_발생() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+            new Product("Title", 100.0, "desc", null, "image.jpg", testRating);
+        });
+        assertEquals("Product category cannot be null.", exception.getMessage());
+    }
+
+    @Test
+    void Rating이_null이어도_Product_생성_성공() {
+        Product product = new Product(
+                "Book",
+                25.0,
+                "A good book.",
+                testCategory,
+                "http://example.com/book.jpg",
+                null // Rating is nullable
+        );
+        assertNotNull(product);
+        assertNull(product.getRating());
     }
 }

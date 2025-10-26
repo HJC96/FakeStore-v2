@@ -1,47 +1,49 @@
 package com.fakeapi.FakeStore.product.domain;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class RatingTest {
+class RatingTest {
 
     @Test
-    void 유효한_평점은_예외를_발생시키지_않는다() {
+    void Rating_생성_성공() {
         Rating rating = new Rating(4.5, 100);
-        assertThatCode(rating::validate).doesNotThrowAnyException();
+        assertNotNull(rating);
+        assertEquals(4.5, rating.getRate());
+        assertEquals(100, rating.getCount());
     }
 
     @Test
-    void 평점_비율이_null이면_예외가_발생한다() {
-        Rating rating = new Rating(null, 100);
-        assertThatThrownBy(rating::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Rating rate cannot be null.");
+    void Rate가_null일_경우_예외_발생() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+            new Rating(null, 100);
+        });
+        assertEquals("Rating rate cannot be null.", exception.getMessage());
     }
 
     @Test
-    void 평점_비율이_음수이면_예외가_발생한다() {
-        Rating rating = new Rating(-1.0, 100);
-        assertThatThrownBy(rating::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Rating rate must be zero or positive.");
+    void Count가_null일_경우_예외_발생() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+            new Rating(4.5, null);
+        });
+        assertEquals("Rating count cannot be null.", exception.getMessage());
     }
 
     @Test
-    void 평가_개수가_null이면_예외가_발생한다() {
-        Rating rating = new Rating(4.5, null);
-        assertThatThrownBy(rating::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Rating count cannot be null.");
+    void Rate가_음수일_경우_예외_발생() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Rating(-1.0, 100);
+        });
+        assertEquals("Rating rate must be zero or positive.", exception.getMessage());
     }
 
     @Test
-    void 평가_개수가_음수이면_예외가_발생한다() {
-        Rating rating = new Rating(4.5, -1);
-        assertThatThrownBy(rating::validate)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Rating count must be zero or positive.");
+    void Count가_음수일_경우_예외_발생() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Rating(4.5, -1);
+        });
+        assertEquals("Rating count must be zero or positive.", exception.getMessage());
     }
 }
